@@ -72,49 +72,16 @@ func NewRedisClient(config *RedisConfig) (*redis.Client, error) {
 
 	client := redis.NewClient(opts)
 
-	// 确保在出错时关闭客户端
-	defer func() {
-		if client != nil {
-			_ = client.Close()
-		}
-	}()
-
 	// 测试连接
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
+		// 连接测试失败时关闭客户端
+		_ = client.Close()
 		return nil, fmt.Errorf("failed to connect to Redis: %w", err)
 	}
 
 	log.Printf("Redis 连接成功: %s, DB: %d", config.Addr, config.DB)
-	return client, nil
-}
-
-// 创建 Redis 集群客户端
-func _(addressArray []string, password string) (*redis.ClusterClient, error) {
-	client := redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs:    addressArray,
-		Password: password,
-		PoolSize: 100,
-	})
-
-	// 确保在出错时关闭客户端
-	defer func() {
-		if client != nil {
-			// 如果需要，可以记录关闭操作
-			_ = client.Close()
-		}
-	}()
-
-	// 测试连接
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := client.Ping(ctx).Err(); err != nil {
-		return nil, fmt.Errorf("failed to connect to Redis Cluster: %w", err)
-	}
-
-	log.Printf("Redis 集群连接成功: %v", addressArray)
 	return client, nil
 }

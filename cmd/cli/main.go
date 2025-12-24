@@ -12,8 +12,6 @@ import (
 
 	"redis-scan-unlink/pkg/redisclient"
 	"redis-scan-unlink/pkg/scanner"
-
-	"github.com/go-redis/redis/v8"
 )
 
 func main() {
@@ -52,8 +50,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("创建 Redis 客户端失败: %v", err)
 	}
+
+	// 先定义一下等等 finally 要回收的资源
 	defer func() {
-		closeSafe(client)
+		if closeErr := client.Close(); closeErr != nil {
+			log.Printf("关闭客户端时发生错误: %v", closeErr)
+		}
 	}()
 
 	// 创建扫描器
@@ -105,12 +107,6 @@ func main() {
 	}
 
 	log.Println("程序结束")
-}
-
-func closeSafe(client *redis.Client) {
-	if closeErr := client.Close(); closeErr != nil {
-		log.Printf("关闭客户端时发生错误: %v", closeErr)
-	}
 }
 
 // printResult 打印结果
