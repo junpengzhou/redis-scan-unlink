@@ -83,7 +83,7 @@ func main() {
 
 	// 执行批量删除
 	if *async {
-		log.Println("⏳ 开始异步批量删除...")
+		log.Println("开始异步批量删除...")
 		result, err := redisScanner.BatchUnlink()
 		if err != nil {
 			log.Fatalf("启动异步删除失败: %v", err)
