@@ -1,1 +1,1 @@
-go build -o build/unlinker cmd/main.go
+go build -o build/unlinker cmd/cli/main.go
