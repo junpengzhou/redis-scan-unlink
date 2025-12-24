@@ -1,0 +1,17 @@
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+  pool_size: 100
+  min_idle_conns: 10
+
+scanner:
+  default_batch_size: 1000
+  default_scan_count: 1000
+  default_workers: 4
+  default_timeout: "30m"
+  progress_interval: "5s"
+
+logging:
+  level: "info"
+  format: "text"
